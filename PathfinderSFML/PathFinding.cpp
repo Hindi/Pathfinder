@@ -166,13 +166,12 @@ void PathFinding::checkNeighbourNode()
 		std::shared_ptr<Node>  getPath;
 		for(getPath = m_goalNode->parent; getPath != NULL; getPath = getPath->parent)
 		{
-			/*if(lineOfSight(lastVisibleNode, getPath))
+			if(lineOfSight(lastVisibleNode, getPath))
 			{
 				savedNode = getPath;
 			}
-			else*/
+			else
 			{
-				savedNode = getPath;
 				m_resultPath.push_back(new Vecteur(savedNode->m_x, savedNode->m_y));
 				lastVisibleNode = savedNode;
 				sf::CircleShape shape( m_world.step / 4);
