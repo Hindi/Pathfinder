@@ -7,22 +7,25 @@ class World
 	public:
 		World(void):
 			step(20),
+			worldWidth(200),
+			worldLength(300),
 			worldSize(2000)
 		{
+
 		}
 			~World(void) {}
 
 		bool checkObstacle(Vecteur pos)
 		{
 			//Bordure de map :
-			if(pos.x >= worldSize || pos.x <= 0 || pos.y >= worldSize || pos.y <= 0)
+			if(pos.x >= worldLength || pos.x <= 0 || pos.y >= worldWidth || pos.y <= 0)
 				return true;
 
 			//Deux obstacles
-			if(pos.x >= 200 && pos.x <= 245 && pos.y >= 0 && pos.y <= 300)
+			if(pos.x >= 4*step && pos.x <= 4*step && pos.y >= 0*step && pos.y <= 5*step)
 				return true;
 	
-			if(pos.x >= 350 && pos.x <= 400 && pos.y >= 200 && pos.y <= 400)
+			if(pos.x >= 8*step && pos.x <= 8*step && pos.y >= 3*step && pos.y <= 6*step)
 				return true;
 
 			return false;
@@ -30,5 +33,7 @@ class World
 
 		const int step;
 		const int worldSize;
+		const int worldWidth;
+		const int worldLength;
 };
 

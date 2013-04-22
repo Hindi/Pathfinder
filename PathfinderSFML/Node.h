@@ -1,5 +1,6 @@
 #include <memory>
 #include "World.hpp"
+#include <iostream>
 
 class Node
 {

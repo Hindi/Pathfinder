@@ -58,6 +58,8 @@ class PathFinding
 		std::vector< std::shared_ptr<Node> > m_openList;
 		std::vector< std::shared_ptr<Node> > m_closedList;
 
+		std::vector< std::shared_ptr<Node> > m_grille;
+
 		//Chemin final
 		std::vector<Vecteur*> m_resultPath;
 
