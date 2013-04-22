@@ -52,22 +52,23 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	int goalId = goal.y*m_world.worldSize + goal.x;
 
 	//On initialise les noeuds de départ et d'arrivée
-	for(int i(0); m_grille[i] != m_grille[m_grille.size()]; i++)
+	std::vector< std::shared_ptr<Node> >::iterator it = m_grille.begin();
+	for(; it != m_grille.end(); it++)
 	{
-		if(m_grille[i]->m_id == startId)
+		if((*it)->m_id == startId)
 		{
-			m_grille[i] = std::shared_ptr<Node>(new Node(m_start.x, m_start.y, m_world, NULL));
-			m_currentNode = m_grille[i];
+			(*it) = std::shared_ptr<Node>(new Node(m_start.x, m_start.y, m_world, NULL));
+			m_currentNode = (*it);
 		}
-		else if(m_grille[i]->m_id == goalId)
+		else if((*it)->m_id == goalId)
 		{
-			m_grille[i]->parent = m_grille[i];
-			m_goalNode = m_grille[i];
+			(*it)->parent = (*it);
+			m_goalNode = (*it);
 		}
 	}
 
 	//On rajoute la node de départ à la liste des nodes disponibles
-	m_closedList.push_back(m_startNode);
+	m_closedList.push_back(m_currentNode);
 
 	//On check les nodes alentours
 	this->checkNeighbourNode();
@@ -91,14 +92,15 @@ void PathFinding::addToOpenList(float x, float y, float moveCost,  std::shared_p
 	for(; itt != m_closedList.end(); itt++)
 		if(id == (*itt)->m_id)
 			return;
-	
-	for(int i(0); m_grille[i] != m_grille[m_grille.size()]; i++)
-		if(id == m_grille[i]->m_id)
+
+	std::vector< std::shared_ptr<Node> >::iterator lit = m_grille.begin();
+	for(; lit != m_grille.end(); lit++)
+		if(id == (*lit)->m_id)
 		{
-			m_grille[i]->parent = parent;
-			m_grille[i]->G = moveCost;
-			m_grille[i]->H = m_grille[i]->manHattanDistance(m_goalNode);
-			m_openList.push_back(m_grille[i]);
+			(*lit)->parent = parent;
+			(*lit)->G = moveCost;
+			(*lit)->H = (*lit)->manHattanDistance(m_goalNode);
+			m_openList.push_back((*lit));
 		}
 
 	
