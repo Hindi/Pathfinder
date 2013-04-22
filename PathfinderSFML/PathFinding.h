@@ -1,0 +1,69 @@
+#include "stdafx.h"
+
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
+#include "Vecteur.hpp"
+#include "Node.h"
+
+/*
+	Permet de trouver un chemin entre les positions 
+	de départ et d'arrivée en prenant en compte les
+	obstacles fixes.
+
+	Méthode :
+	- Utiliser setStartAndGoal() pour définir les 
+		positions de départ et d'arrivée. 
+	- Utiliser findPath() (threadé de préférence)
+	- Utiliser path() pour récupérer le chemin trouvé
+
+*/
+
+class PathFinding
+{
+	public:
+		PathFinding(World world);
+		~PathFinding(void);
+		
+		//Sert a lancer la recherche, fait les initialisations
+		void findPath(Vecteur start, Vecteur goal);
+
+		//Renvoie le chemin vers l'objectif
+		std::vector<Vecteur*> getPath();
+
+		//Dessine nos objets à l'écran
+		void draw(sf::RenderWindow &window);
+
+	private:
+		//Rajoute une node à la liste des noeds disponibles pour le chemin
+		void addToOpenList(float x, float y, float moveCost, std::shared_ptr<Node> parent);
+
+		//Lance les calculs sur les nodes alentours, vérifie si l'on est arrivé
+		void checkNeighbourNode();
+
+		bool lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<Node> goalNode);
+		
+		//Positions de départ et d'arrivée
+		Vecteur m_start, m_goal;
+
+		//Nodes de départ et d'arrivée
+		std::shared_ptr<Node> m_startNode;
+		std::shared_ptr<Node> m_goalNode;
+
+		//Node sur laquelle s'effectue le calcul
+		std::shared_ptr<Node> m_currentNode;
+
+		//Listes des nodes disponibles pour les calculs e pour le chemin final
+		std::vector< std::shared_ptr<Node> > m_openList;
+		std::vector< std::shared_ptr<Node> > m_closedList;
+
+		//Chemin final
+		std::vector<Vecteur*> m_resultPath;
+
+		//Sert aux débug pour stocker les cercles affichés lors du calcul
+		std::vector<sf::CircleShape> m_shapes;
+
+		World m_world;
+};
+
