@@ -9,11 +9,11 @@ Node::Node(void):
 {
 }
 
-Node::Node(int x, int y, World world, Node* _parent):
+Node::Node(int x, int y, int id, World world, Node* _parent):
 	m_x(x), 
 	m_y(y), 
 	parent(_parent),
-	m_id(y * world.worldSize + x), 
+	m_id(id), 
 	G(0), 
 	H(0),
 	m_world(world)
@@ -41,7 +41,7 @@ void Node::manHattanDistance(Node nodeEnd)
 {
 	int x = (ABS((this->m_x - nodeEnd.m_x)) / m_world.step);
 	int y = (ABS((this->m_y - nodeEnd.m_y)) / m_world.step);
-	H = x + y;
+	this->H = x + y;
 }
 
 Node& Node::operator=(const Node &node)

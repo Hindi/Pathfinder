@@ -6,7 +6,7 @@ class Node
 {
 public:
 	Node();
-	Node(int x, int y, World world, Node* _parent = 0);
+	Node(int x, int y, int id, World world, Node* _parent = 0);
 	~Node(void);
 
 	//return  G + H

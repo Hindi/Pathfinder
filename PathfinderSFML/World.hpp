@@ -9,7 +9,7 @@ class World
 			step(20),
 			worldWidth(200),
 			worldLength(300),
-			worldSize(2000)
+			worldSize(1000)
 		{
 
 		}

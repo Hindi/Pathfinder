@@ -6,25 +6,25 @@
 PathFinding::PathFinding(World world):
 	m_world(world)
 {
+	int id;
 	for(int i(0); i <= world.worldLength; i += m_world.step)
 		for(int j(0); j <= world.worldWidth; j +=  m_world.step)
-		{
 			if(!world.checkObstacle(Vecteur(i,j)))
 			{
-				m_grille[j*m_world.worldSize + i] = Node(i, j, m_world);
+				id = j*m_world.worldSize + i;
+				m_grille[id] = Node(i, j, id, m_world, NULL);
 
 				sf::CircleShape shape( m_world.step / 4);
 				shape.setFillColor(sf::Color::Black);
 				shape.setPosition(i,j);
 				m_shapes.push_back(shape);
 			}
-		}
 }
 
 
 PathFinding::~PathFinding(void)
 {
-	//delete m_currentNode;
+	delete m_currentNode;
 }
 
 //Sert a lancer la recherche, fait les initialisations
@@ -79,7 +79,12 @@ void PathFinding::addToOpenList(float x, float y, float moveCost,  Node* parent)
 	m_grille[id].manHattanDistance(m_goalNode);
 	m_grille[id].parent = parent;
 	m_openList.push_back(m_grille[id]);
-	
+
+	if(id == 140*1000+160 )
+	{
+		std::cout << parent->m_id << std::endl;
+	}
+
     sf::CircleShape shape( m_world.step / 4);
     shape.setFillColor(sf::Color::Green);
 	shape.setPosition(x, y);
@@ -100,7 +105,11 @@ void PathFinding::checkNeighbourNode()
 		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y +m_world.step, 1.4f, m_currentNode);
 		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y -m_world.step, 1.4f, m_currentNode);
 		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y -m_world.step, 1, m_currentNode);
-
+		if(m_currentNode->m_id == 140*1000+160)
+			{
+				std::cout << m_currentNode->parent->m_x << " " << m_currentNode->parent->m_y << std::endl;
+				std::cout << m_grille[140*1000+160].parent->m_x << " " << m_grille[140*1000+160].parent->m_y << std::endl;
+			}
 		//Si m_openList est vide, cela signifie que la position demandé n'est pas accessible
 		if(m_openList.empty())
 			return;
@@ -137,16 +146,16 @@ void PathFinding::checkNeighbourNode()
 	{
 		//On récupère le parent des nodes une à une pour remonter jusqu'au départ
 		m_goalNode.parent = m_currentNode;
-		for(Node* getPath = new Node(m_goalNode); getPath != NULL; getPath = getPath->parent)
+		Node* getPath = new Node(m_goalNode);
+		for(; getPath != NULL; getPath = getPath->parent)
 		{
-			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
 			m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
 			sf::CircleShape shape( m_world.step / 4);
 			shape.setFillColor(sf::Color::Blue);
 			shape.setPosition(getPath->m_x, getPath->m_y);
 			m_shapes.push_back(shape);
 		}
-		delete m_currentNode;
+		delete getPath;
 		return;
 	}
 }
