@@ -13,7 +13,8 @@ PathFinding::PathFinding(World world):
 		{
 			if(!world.checkObstacle(Vecteur(i,j)))
 			{
-				m_grille.push_back(std::shared_ptr<Node>(new Node(i, j, m_world)));
+				m_grille[j*m_world.worldSize + i] = Node(i, j, m_world);
+
 				sf::CircleShape shape( m_world.step / 4);
 				shape.setFillColor(sf::Color::Black);
 				shape.setPosition(i,j);
@@ -25,7 +26,7 @@ PathFinding::PathFinding(World world):
 
 PathFinding::~PathFinding(void)
 {
-
+	//delete m_currentNode;
 }
 
 //Sert a lancer la recherche, fait les initialisations
@@ -39,7 +40,7 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	if((m_start.x == m_goal.x && m_start.y == m_goal.y) || m_world.checkObstacle(Vecteur(m_goal.x, m_goal.y)))
 	{
 		//On met l'arrivée dans la liste des positions
-		m_resultPath.push_back(new Vecteur(m_goal.x, m_goal.y));
+		m_resultPath.push_back(Vecteur(m_goal.x, m_goal.y));
 		return;
 	}
 	
@@ -52,57 +53,38 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	int goalId = goal.y*m_world.worldSize + goal.x;
 
 	//On initialise les noeuds de départ et d'arrivée
-	std::vector< std::shared_ptr<Node> >::iterator it = m_grille.begin();
-	for(; it != m_grille.end(); it++)
-	{
-		if((*it)->m_id == startId)
-		{
-			(*it) = std::shared_ptr<Node>(new Node(m_start.x, m_start.y, m_world, NULL));
-			m_currentNode = (*it);
-		}
-		else if((*it)->m_id == goalId)
-		{
-			(*it)->parent = (*it);
-			m_goalNode = (*it);
-		}
-	}
+	m_currentNode = new Node(m_grille[startId]);
+	m_goalNode = m_grille[goalId];
 
 	//On rajoute la node de départ à la liste des nodes disponibles
-	m_closedList.push_back(m_currentNode);
+	m_closedList.push_back(*m_currentNode);
 
 	//On check les nodes alentours
 	this->checkNeighbourNode();
 }
 
 //Rajoute une node à la liste des nodes disponibles pour le chemin
-void PathFinding::addToOpenList(float x, float y, float moveCost,  std::shared_ptr<Node>  parent)
-{
-	//On vérifie les collisions avec les obstacles fixes
-	if(m_world.checkObstacle(Vecteur(x, y)))
+void PathFinding::addToOpenList(float x, float y, float moveCost,  Node* parent)
+{	
+	int id = y * m_world.worldSize + x;
+	std::unordered_map<int, Node>::const_iterator exist = m_grille.find(id);
+	if(exist == m_grille.end())
 		return;
 
-	int id = y * m_world.worldSize + x;
-
 	//On s'arrête là si les calculs ont déjà été fait pour cette node
-	std::vector< std::shared_ptr<Node> >::iterator it = m_openList.begin();
+	std::vector<Node>::iterator it = m_openList.begin();
 	for(; it != m_openList.end(); it++)
-		if(id == (*it)->m_id)
+		if(id == (it)->m_id)
 			return;
-	std::vector< std::shared_ptr<Node> >::iterator itt = m_closedList.begin();
+	std::vector<Node>::iterator itt = m_closedList.begin();
 	for(; itt != m_closedList.end(); itt++)
-		if(id == (*itt)->m_id)
+		if(id == (itt)->m_id)
 			return;
 
-	std::vector< std::shared_ptr<Node> >::iterator lit = m_grille.begin();
-	for(; lit != m_grille.end(); lit++)
-		if(id == (*lit)->m_id)
-		{
-			(*lit)->parent = parent;
-			(*lit)->G = moveCost;
-			(*lit)->H = (*lit)->manHattanDistance(m_goalNode);
-			m_openList.push_back((*lit));
-		}
-
+	m_grille[id].G = moveCost;
+	m_grille[id].manHattanDistance(m_goalNode);
+	m_grille[id].parent = parent;
+	m_openList.push_back(m_grille[id]);
 	
     sf::CircleShape shape( m_world.step / 4);
     shape.setFillColor(sf::Color::Green);
@@ -133,19 +115,19 @@ void PathFinding::checkNeighbourNode()
 			//On regarde la prochaine node sur laquelle on va fixer nos recherches
 			//On choisit la node dans m_openList avec le F minimum
 			float Fvalue = 99999;
-			std::vector< std::shared_ptr<Node> >::iterator eraseIt;
-			std::vector< std::shared_ptr<Node> >::iterator it = m_openList.begin();
+			std::vector<Node>::iterator eraseIt;
+			std::vector<Node>::iterator it = m_openList.begin();
 			for(; it != m_openList.end(); it++)
-				if(Fvalue > (*it)->getF())
+				if(Fvalue > (it)->getF())
 				{
-					Fvalue = (*it)->getF();
+					Fvalue = (it)->getF();
 					eraseIt = it;
 				}
-			m_currentNode = *eraseIt;
+			m_currentNode = new Node(*eraseIt);
+			//Et on la rajoute à la liste des nodes potentiellement sur le chemin final
+			m_closedList.push_back(*m_currentNode);
 			//On l'enlève de la liste des nodes disponibles
 			m_openList.erase(eraseIt);
-			//Et on la rajoute à la liste des nodes potentiellement sur le chemin final
-			m_closedList.push_back(m_currentNode);
 
 			sf::CircleShape shape( m_world.step / 4);
 			shape.setFillColor(sf::Color::Red);
@@ -160,32 +142,23 @@ void PathFinding::checkNeighbourNode()
 	else
 	{
 		//On récupère le parent des nodes une à une pour remonter jusqu'au départ
-		m_goalNode->parent = m_currentNode;
-		std::shared_ptr<Node> lastVisibleNode = m_goalNode;
-		std::shared_ptr<Node> savedNode = m_currentNode;
-		std::shared_ptr<Node>  getPath;
-		for(getPath = m_goalNode->parent; getPath != NULL; getPath = getPath->parent)
+		m_goalNode.parent = m_currentNode;
+		for(Node* getPath = new Node(m_goalNode); getPath != NULL; getPath = getPath->parent)
 		{
-			if(lineOfSight(lastVisibleNode, getPath))
-			{
-				savedNode = getPath;
-			}
-			else
-			{
-				m_resultPath.push_back(new Vecteur(savedNode->m_x, savedNode->m_y));
-				lastVisibleNode = savedNode;
+			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
+				m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
 				sf::CircleShape shape( m_world.step / 4);
 				shape.setFillColor(sf::Color::Blue);
-				shape.setPosition(savedNode->m_x, savedNode->m_y);
+				shape.setPosition(getPath->m_x, getPath->m_y);
 				m_shapes.push_back(shape);
-			}
 		}
+		delete m_currentNode;
 		return;
 	}
 }
 
 //Renvoie le chemin vers l'objectif
-std::vector<Vecteur*> PathFinding::getPath()
+std::vector<Vecteur> PathFinding::getPath()
 {
 	return m_resultPath;
 }

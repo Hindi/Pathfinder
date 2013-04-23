@@ -23,6 +23,11 @@ class Vecteur
 				y = vector.y;
 				return *this;
 			}
+
+		bool operator==(const Vecteur &vector)
+			{
+				return (x == vector.x && y == vector.y);
+			}
 		
 		float x;
 		float y;

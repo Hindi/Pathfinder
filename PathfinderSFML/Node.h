@@ -6,17 +6,19 @@ class Node
 {
 public:
 	Node();
-	Node(int x, int y, World world, std::shared_ptr<Node> _parent = 0);
+	Node(int x, int y, World world, Node* _parent = 0);
 	~Node(void);
 
 	//return  G + H
 	float getF();
 
 	//Distance depuis la node actuelle jusqu'à la prochaine
-	int manHattanDistance(std::shared_ptr<Node> nodeEnd);	
+	void manHattanDistance(Node nodeEnd);	
 
 	//Vérifie si this est proche de goalNode
-	bool isClosed(std::shared_ptr<Node> goalNode);
+	bool isClosed(Node goalNode);
+
+	Node& operator=(const Node &node);
 
 	//Position
 	int m_x, m_y;
@@ -25,7 +27,7 @@ public:
 	int m_id;
 
 	//Pointeur vers le Node parent
-	std::shared_ptr<Node> parent;
+	Node* parent;
 
 	//Cout du déplacement
 	float G;

@@ -9,7 +9,7 @@ Node::Node(void):
 {
 }
 
-Node::Node(int x, int y, World world, std::shared_ptr<Node> _parent):
+Node::Node(int x, int y, World world, Node* _parent):
 	m_x(x), 
 	m_y(y), 
 	parent(_parent),
@@ -31,15 +31,24 @@ float Node::getF()
 	 return G + H;
 }
 
-bool Node::isClosed(std::shared_ptr<Node> goalNode)
+bool Node::isClosed(Node goalNode)
 {
-	return (fabs((float)goalNode->m_x - m_x) <= m_world.step && fabs((float)goalNode->m_y - m_y) <= m_world.step);
+	return (fabs((float)goalNode.m_x - m_x) <= m_world.step && fabs((float)goalNode.m_y - m_y) <= m_world.step);
 }
 
 //Distance depuis la node actuelle jusqu'à l'objectif
-int Node::manHattanDistance(std::shared_ptr<Node> nodeEnd)	
+void Node::manHattanDistance(Node nodeEnd)	
 {
-	int x = (ABS((this->m_x - nodeEnd->m_x)) / m_world.step);
-	int y = (ABS((this->m_y - nodeEnd->m_y)) / m_world.step);
-	return x + y;
+	int x = (ABS((this->m_x - nodeEnd.m_x)) / m_world.step);
+	int y = (ABS((this->m_y - nodeEnd.m_y)) / m_world.step);
+	H = x + y;
 }
+
+Node& Node::operator=(const Node &node)
+{
+	m_x = node.m_x;
+	m_y = node.m_y;
+	m_id = node.m_id;
+	return *this;
+}
+		

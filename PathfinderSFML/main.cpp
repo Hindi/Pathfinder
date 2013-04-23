@@ -17,10 +17,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//On lance la recherche de chemin
 	pathfinder.findPath(Vecteur(world.step,world.step), Vecteur(11*world.step,2*world.step));
 	//On créé une liste Vecteur et on récupère le chemin du pathfinder
-	std::vector<Vecteur*> path(pathfinder.getPath());
+	std::vector<Vecteur> path(pathfinder.getPath());
 	
 	//On affiche les coordonées des points du chemin
-	std::vector<Vecteur*>::reverse_iterator it = path.rbegin();
+	std::vector<Vecteur>::reverse_iterator it = path.rbegin();
 	/*for(; it != path.rend(); it++)
 		std::cout << (*it)->x << " " << (*it)->y << std::endl;*/
 	//On créé les obstacles

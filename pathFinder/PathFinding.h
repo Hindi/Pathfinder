@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <SFML\Graphics.hpp>
 
 #include "Vecteur.hpp"
 #include "Node.h"
@@ -32,6 +33,9 @@ class PathFinding
 		//Renvoie le chemin vers l'objectif
 		std::vector<Vecteur> getPath();
 
+		//Dessine nos objets à l'écran
+		void draw(sf::RenderWindow &window);
+
 	private:
 		//Rajoute une node à la liste des noeds disponibles pour le chemin
 		void addToOpenList(float x, float y, float moveCost, Node* parent);
@@ -47,7 +51,7 @@ class PathFinding
 		Node m_goalNode;
 
 		//Node sur laquelle s'effectue le calcul
-		Node m_currentNode;
+		Node* m_currentNode;
 
 		//Listes des nodes disponibles pour les calculs e pour le chemin final
 		std::vector<Node> m_openList;
@@ -55,6 +59,10 @@ class PathFinding
 
 		//Chemin final
 		std::vector<Vecteur> m_resultPath;
+		
+
+		//Sert aux débug pour stocker les cercles affichés lors du calcul
+		std::vector<sf::CircleShape> m_shapes;
 
 		//L'espace de jeu
 		World m_world;
