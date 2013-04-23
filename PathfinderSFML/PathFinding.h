@@ -44,9 +44,6 @@ class PathFinding
 		void checkNeighbourNode();
 
 		bool lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<Node> goalNode);
-		
-		//Positions de départ et d'arrivée
-		Vecteur m_start, m_goal;
 
 		//Nodes de départ et d'arrivée
 		Node m_startNode;

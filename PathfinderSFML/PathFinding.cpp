@@ -4,8 +4,6 @@
 #define ABS(x) (((x) < 0) ? -(x) : (x))
 
 PathFinding::PathFinding(World world):
-	m_start(0,0),
-	m_goal(0,0),
 	m_world(world)
 {
 	for(int i(0); i <= world.worldLength; i += m_world.step)
@@ -31,16 +29,12 @@ PathFinding::~PathFinding(void)
 
 //Sert a lancer la recherche, fait les initialisations
 void PathFinding::findPath(Vecteur start, Vecteur goal)
-{
-	m_start = start;
-	m_goal = goal;
-
-	
+{	
 	//Si le départ est au même endroit que l'arrivée ou sur un obstacle
-	if((m_start.x == m_goal.x && m_start.y == m_goal.y) || m_world.checkObstacle(Vecteur(m_goal.x, m_goal.y)))
+	if((start.x == goal.x && start.y == goal.y) || m_world.checkObstacle(Vecteur(goal.x, goal.y)))
 	{
 		//On met l'arrivée dans la liste des positions
-		m_resultPath.push_back(Vecteur(m_goal.x, m_goal.y));
+		m_resultPath.push_back(Vecteur(goal.x, goal.y));
 		return;
 	}
 	
@@ -146,11 +140,11 @@ void PathFinding::checkNeighbourNode()
 		for(Node* getPath = new Node(m_goalNode); getPath != NULL; getPath = getPath->parent)
 		{
 			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
-				m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
-				sf::CircleShape shape( m_world.step / 4);
-				shape.setFillColor(sf::Color::Blue);
-				shape.setPosition(getPath->m_x, getPath->m_y);
-				m_shapes.push_back(shape);
+			m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
+			sf::CircleShape shape( m_world.step / 4);
+			shape.setFillColor(sf::Color::Blue);
+			shape.setPosition(getPath->m_x, getPath->m_y);
+			m_shapes.push_back(shape);
 		}
 		delete m_currentNode;
 		return;
