@@ -138,10 +138,6 @@ void PathFinding::checkNeighbourNode()
 	{
 		//On récupère le parent des nodes une à une pour remonter jusqu'au départ
 		m_goalNode.parent = m_currentNode;
-<<<<<<< HEAD
-=======
-
->>>>>>> 688e85336a91e481b0e8f47f4b32302494e754cc
 		for(Node* getPath = new Node(m_goalNode); getPath->parent != NULL; getPath = getPath->parent)
 		{
 			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
