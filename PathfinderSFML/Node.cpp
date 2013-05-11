@@ -9,11 +9,11 @@ Node::Node(void):
 {
 }
 
-Node::Node(int x, int y, int id, World world, Node* _parent):
+Node::Node(int x, int y, World world, Node* _parent):
 	m_x(x), 
 	m_y(y), 
 	parent(_parent),
-	m_id(id), 
+	m_id(y*world.worldSize+x), 
 	G(0), 
 	H(0),
 	m_world(world)
