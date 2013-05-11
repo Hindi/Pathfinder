@@ -49,6 +49,8 @@ class PathFinding
 
 		bool lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<Node> goalNode);
 
+		void findCLoseNode();
+
 		//Nodes de départ et d'arrivée
 		Node m_startNode;
 		Node m_goalNode;

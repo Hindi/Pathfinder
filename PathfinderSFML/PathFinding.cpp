@@ -6,21 +6,17 @@
 PathFinding::PathFinding(World world):
 	m_world(world)
 {
-	int id;
 	for(int i(0); i <= world.worldLength; i += m_world.step)
 		for(int j(0); j <= world.worldWidth; j +=  m_world.step)
-		{
-			int id = j*m_world.worldSize + i;
-			if(!world.checkObstacleId(id))
+			if(!world.checkObstacle(Vecteur(i,j)))
 			{
-				m_grille[id] = Node(i, j, m_world);
+				m_grille[j*m_world.worldSize + i] = Node(i, j, m_world);
 
 				sf::CircleShape shape( m_world.step / 4);
 				shape.setFillColor(sf::Color::Black);
 				shape.setPosition(i,j);
 				m_shapes.push_back(shape);
 			}
-		}
 }
 
 
@@ -48,9 +44,14 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	int startId = start.y*m_world.worldSize + start.x;
 	int goalId = goal.y*m_world.worldSize + goal.x;
 
+	m_grille[startId] = Node(start.x, start.y, m_world);
+	m_grille[goalId] = Node(goal.x, goal.y, m_world);
+
 	//On initialise les noeuds de départ et d'arrivée
-	m_currentNode = new Node(m_grille[startId]);
+	//m_currentNode = new Node(m_grille[startId]);
 	m_goalNode = m_grille[goalId];
+	m_startNode = m_grille[startId];
+	findCLoseNode();
 
 	//On rajoute la node de départ à la liste des nodes disponibles
 	m_closedList.insert(startId);
@@ -101,7 +102,6 @@ void PathFinding::checkNeighbourNode()
 		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y -m_world.step, 1.4f, m_currentNode);
 		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y -m_world.step, 1, m_currentNode);
 		
-		std::cout << m_openList.size() << std::endl;
 		//Si m_openList est vide, cela signifie que la position demandé n'est pas accessible
 		if(m_openList.empty())
 			return;
@@ -140,7 +140,6 @@ void PathFinding::checkNeighbourNode()
 		m_goalNode.parent = m_currentNode;
 		for(Node* getPath = new Node(m_goalNode); getPath->parent != NULL; getPath = getPath->parent)
 		{
-			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
 			m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
 			sf::CircleShape shape( m_world.step / 4);
 			shape.setFillColor(sf::Color::Blue);
@@ -280,4 +279,13 @@ bool PathFinding::lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<N
 		}
 		*/
 		return true;
+}
+
+void PathFinding::findCLoseNode()
+{
+	int x,y;
+	x = m_startNode.m_x / m_world.step;
+	y = m_startNode.m_y / m_world.step;
+	m_currentNode = new Node(m_grille[m_world.step*y*m_world.worldSize + x*m_world.step]);
+	std::cout << x << " " << y << std::endl;
 }
