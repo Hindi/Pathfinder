@@ -4,10 +4,9 @@
 #define ABS(x) (((x) < 0) ? -(x) : (x))
 
 PathFinding::PathFinding(World world):
-	m_start(0,0),
-	m_goal(0,0),
 	m_world(world)
 {
+	int id;
 	for(int i(0); i <= world.worldLength; i += m_world.step)
 		for(int j(0); j <= world.worldWidth; j +=  m_world.step)
 		{
@@ -25,23 +24,19 @@ PathFinding::PathFinding(World world):
 }
 
 
-PathFinding::~PathFinding(void)
+PathFinding::~PathFinding()
 {
 
 }
 
 //Sert a lancer la recherche, fait les initialisations
 void PathFinding::findPath(Vecteur start, Vecteur goal)
-{
-	m_start = start;
-	m_goal = goal;
-
-	
+{	
 	//Si le départ est au même endroit que l'arrivée ou sur un obstacle
-	if((m_start.x == m_goal.x && m_start.y == m_goal.y) || m_world.checkObstacle(Vecteur(m_goal.x, m_goal.y)))
+	if((start.x == goal.x && start.y == goal.y) || m_world.checkObstacle(Vecteur(goal.x, goal.y)))
 	{
 		//On met l'arrivée dans la liste des positions
-		m_resultPath.push_back(Vecteur(m_goal.x, m_goal.y));
+		m_resultPath.push_back(Vecteur(goal.x, goal.y));
 		return;
 	}
 	
@@ -143,6 +138,10 @@ void PathFinding::checkNeighbourNode()
 	{
 		//On récupère le parent des nodes une à une pour remonter jusqu'au départ
 		m_goalNode.parent = m_currentNode;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 688e85336a91e481b0e8f47f4b32302494e754cc
 		for(Node* getPath = new Node(m_goalNode); getPath->parent != NULL; getPath = getPath->parent)
 		{
 			std::cout << getPath->m_x << " " << getPath->m_y << std::endl;
