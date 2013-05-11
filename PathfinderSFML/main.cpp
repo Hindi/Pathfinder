@@ -9,13 +9,13 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//On lance la recherche de chemin
-	sf::RenderWindow window(sf::VideoMode(1024 , 768), "Pathfinding A* - Cours siteduzero.com");
+	sf::RenderWindow window(sf::VideoMode(1024 , 768), "Pathfinding A*");
 	//Espace de jeu
 	World world;
 	//On instancie le pathFinder
 	PathFinding pathfinder(world);
 	//On lance la recherche de chemin
-	pathfinder.findPath(Vecteur(world.step,world.step), Vecteur(11*world.step,2*world.step));
+	pathfinder.findPath(Vecteur(world.step,world.step), Vecteur(11*world.step,3*world.step));
 	//On créé une liste Vecteur et on récupère le chemin du pathfinder
 	std::vector<Vecteur> path(pathfinder.getPath());
 	

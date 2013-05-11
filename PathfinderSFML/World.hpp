@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Vecteur.hpp"
+#include "QuadTree.h"
+
 
 class World
 {
@@ -9,11 +11,21 @@ class World
 			step(20),
 			worldWidth(200),
 			worldLength(300),
-			worldSize(2000)
+			worldSize(1000)
 		{
-
+			quadTree = QuadTree(Vecteur(worldWidth, worldLength), worldSize);
+			loadMap();
 		}
-			~World(void) {}
+		
+		~World(void) {}
+
+		void loadMap()
+		{
+			for(int i(0); i <= worldLength; i += step)
+				for(int j(0); j <= worldWidth; j +=  step)
+					if(checkObstacle(Vecteur(i,j)))
+						quadTree.addObstacleId(j*worldSize + i);
+		}
 
 		bool checkObstacle(Vecteur pos)
 		{
@@ -31,9 +43,15 @@ class World
 			return false;
 		}
 
+		bool checkObstacleId(int id)
+		{
+			return quadTree.containsObstacleId(id);
+		}
+
 		const int step;
 		const int worldSize;
 		const int worldWidth;
 		const int worldLength;
+		QuadTree quadTree;
 };
 

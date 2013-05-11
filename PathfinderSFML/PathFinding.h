@@ -4,6 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
+
+#include <sstream>
+#include <string>
 
 #include "Vecteur.hpp"
 #include "Node.h"
@@ -56,15 +60,15 @@ class PathFinding
 		Node* m_currentNode;
 
 		//Listes des nodes disponibles pour les calculs e pour le chemin final
-		std::vector<Node> m_openList;
-		std::vector<Node> m_closedList;
+		std::unordered_set<int> m_openList;
+		std::unordered_set<int> m_closedList;
 
 		//Chemin final
 		std::vector<Vecteur> m_resultPath;
 
 		//Sert aux débug pour stocker les cercles affichés lors du calcul
 		std::vector<sf::CircleShape> m_shapes;
-
+		std::vector<sf::Text> m_text;
 		std::unordered_map<int, Node> m_grille;
 
 		World m_world;
