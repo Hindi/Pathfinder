@@ -6,7 +6,7 @@ class Vecteur
 		Vecteur(void) {}
 		~Vecteur(void) {}
 		
-		Vecteur(float nX, float nY)
+		Vecteur(int nX, int nY)
 			{
 				x = nX;
 				y =nY;
@@ -29,8 +29,8 @@ class Vecteur
 				return (x == vector.x && y == vector.y);
 			}
 		
-		float x;
-		float y;
+		int x;
+		int y;
 
 };
 

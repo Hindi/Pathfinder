@@ -51,8 +51,8 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	//m_currentNode = new Node(m_grille[startId]);
 	m_goalNode = m_grille[goalId];
 	m_startNode = m_grille[startId];
-	findCLoseNode();
-
+	findStartNode();
+		
 	//On rajoute la node de départ à la liste des nodes disponibles
 	m_closedList.insert(startId);
 
@@ -93,14 +93,14 @@ void PathFinding::checkNeighbourNode()
 	//Si l'objectif n'est pas proche
 	if(!m_currentNode->isClosed(m_goalNode))
 	{	
-		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y, 1, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y +m_world.step, 1, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y +m_world.step, 1.4f, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y -m_world.step, 1.4f, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y, 1, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y +m_world.step, 1.4f, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y -m_world.step, 1.4f, m_currentNode);
-		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y -m_world.step, 1, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y, 10, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y +m_world.step, 10, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y +m_world.step, 14, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y -m_world.step, 14, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y, 10, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x -m_world.step, m_currentNode->m_y +m_world.step, 14, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x +m_world.step, m_currentNode->m_y -m_world.step, 14, m_currentNode);
+		this->addToOpenList(m_currentNode->m_x, m_currentNode->m_y -m_world.step, 10, m_currentNode);
 		
 		//Si m_openList est vide, cela signifie que la position demandé n'est pas accessible
 		if(m_openList.empty())
@@ -109,15 +109,18 @@ void PathFinding::checkNeighbourNode()
 		{
 			//On regarde la prochaine node sur laquelle on va fixer nos recherches
 			//On choisit la node dans m_openList avec le F minimum
-			float Fvalue = 99999;
+			float Fvalue = 999;
 			int eraseIt;
 			std::unordered_set<int>::iterator it = m_openList.begin();
 			for(; it != m_openList.end(); it++)
-				if(Fvalue > m_grille[(*it)].getF())
+			{
+				int F = m_grille[(*it)].getF();
+				if(Fvalue > F)
 				{
-					Fvalue = m_grille[(*it)].getF();
+					Fvalue = F;
 					eraseIt = (*it);
 				}
+			}
 			m_currentNode = new Node(m_grille[eraseIt]);
 			//Et on la rajoute à la liste des nodes potentiellement sur le chemin final
 			m_closedList.insert(eraseIt);
@@ -138,7 +141,7 @@ void PathFinding::checkNeighbourNode()
 	{
 		//On récupère le parent des nodes une à une pour remonter jusqu'au départ
 		m_goalNode.parent = m_currentNode;
-		for(Node* getPath = new Node(m_goalNode); getPath->parent != NULL; getPath = getPath->parent)
+		for(Node* getPath = new Node(m_goalNode); getPath != NULL; getPath = getPath->parent)
 		{
 			m_resultPath.push_back(Vecteur(getPath->m_x, getPath->m_y));
 			sf::CircleShape shape( m_world.step / 4);
@@ -281,11 +284,12 @@ bool PathFinding::lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<N
 		return true;
 }
 
-void PathFinding::findCLoseNode()
+void PathFinding::findStartNode()
 {
+	//On divise et on stocke dans un int pour arrondir
 	int x,y;
 	x = m_startNode.m_x / m_world.step;
 	y = m_startNode.m_y / m_world.step;
+	//On remultiplie par step pour calculer l'id de la node qui convient
 	m_currentNode = new Node(m_grille[m_world.step*y*m_world.worldSize + x*m_world.step]);
-	std::cout << x << " " << y << std::endl;
 }

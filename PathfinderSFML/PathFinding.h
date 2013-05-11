@@ -49,7 +49,8 @@ class PathFinding
 
 		bool lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<Node> goalNode);
 
-		void findCLoseNode();
+		//Permet de trouver une node de départ convenable
+		void findStartNode();
 
 		//Nodes de départ et d'arrivée
 		Node m_startNode;
@@ -72,4 +73,3 @@ class PathFinding
 
 		World m_world;
 };
-

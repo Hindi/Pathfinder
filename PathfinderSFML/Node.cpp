@@ -26,7 +26,7 @@ Node::~Node(void)
 
 }
 
-float Node::getF()
+int Node::getF()
 {
 	 return G + H;
 }
@@ -41,7 +41,7 @@ void Node::manHattanDistance(Node nodeEnd)
 {
 	int x = (ABS((this->m_x - nodeEnd.m_x)) / m_world.step);
 	int y = (ABS((this->m_y - nodeEnd.m_y)) / m_world.step);
-	this->H = x + y;
+	this->H = 10*(x + y);
 }
 
 Node& Node::operator=(const Node &node)
@@ -51,4 +51,3 @@ Node& Node::operator=(const Node &node)
 	m_id = node.m_id;
 	return *this;
 }
-		

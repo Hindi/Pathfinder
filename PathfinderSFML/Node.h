@@ -10,7 +10,7 @@ public:
 	~Node(void);
 
 	//return  G + H
-	float getF();
+	int getF();
 
 	//Distance depuis la node actuelle jusqu'à la prochaine
 	void manHattanDistance(Node nodeEnd);	
@@ -30,7 +30,7 @@ public:
 	Node* parent;
 
 	//Cout du déplacement
-	float G;
+	int G;
 
 	//manHattanDistance : distance entre la node et lanode d'arrivée
 	int H;

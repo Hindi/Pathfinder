@@ -36,4 +36,3 @@ class World
 		const int worldWidth;
 		const int worldLength;
 };
-

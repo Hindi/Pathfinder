@@ -15,7 +15,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//On instancie le pathFinder
 	PathFinding pathfinder(world);
 	//On lance la recherche de chemin
-	pathfinder.findPath(Vecteur(30,40), Vecteur(230,50));
+	pathfinder.findPath(Vecteur(30,40), Vecteur(250,150));
 	//On créé une liste Vecteur et on récupère le chemin du pathfinder
 	std::vector<Vecteur> path(pathfinder.getPath());
 	
