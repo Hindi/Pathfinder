@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	pathfinder.findPath(Vecteur(30,40), Vecteur(250,150));
 	//On créé une liste Vecteur et on récupère le chemin du pathfinder
 	std::vector<Vecteur> path(pathfinder.getPath());
-	
+
 	//On affiche les coordonées des points du chemin
 	std::vector<Vecteur>::reverse_iterator it = path.rbegin();
 	/*for(; it != path.rend(); it++)
@@ -30,10 +30,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	sf::RectangleShape rect2(sf::Vector2f(50, 200));
 	rect2.setFillColor(sf::Color::Black);
 	rect2.setPosition(350, 200);
+
+	sf::Clock clock;
 	
 	//Boucle d'affichage
 	while (window.isOpen())
     {
+		if(clock.getElapsedTime().asSeconds() > 0.5)
+		{
+			clock.restart();
+			int y = rand() % 140 + 10 ;
+			int x = rand() % 240 + 10 ;
+			pathfinder.findPath(Vecteur(30,40), Vecteur(x,y));
+		}
 		//Enlever l'affichage la frame précédent
 		window.clear(sf::Color::White);
 		sf::Event event;

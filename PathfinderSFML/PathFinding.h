@@ -68,6 +68,8 @@ class PathFinding
 
 		//Sert aux débug pour stocker les cercles affichés lors du calcul
 		std::vector<sf::CircleShape> m_shapes;
+		std::vector<sf::CircleShape> m_shapesMap;
+
 		std::vector<sf::Text> m_text;
 		std::unordered_map<int, Node> m_grille;
 

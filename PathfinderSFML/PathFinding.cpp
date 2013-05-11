@@ -15,7 +15,7 @@ PathFinding::PathFinding(World world):
 				sf::CircleShape shape( m_world.step / 4);
 				shape.setFillColor(sf::Color::Black);
 				shape.setPosition(i,j);
-				m_shapes.push_back(shape);
+				m_shapesMap.push_back(shape);
 			}
 }
 
@@ -32,11 +32,12 @@ void PathFinding::findPath(Vecteur start, Vecteur goal)
 	if((start.x == goal.x && start.y == goal.y) || m_world.checkObstacle(Vecteur(goal.x, goal.y)))
 	{
 		//On met l'arrivée dans la liste des positions
-		m_resultPath.push_back(Vecteur(goal.x, goal.y));
+		m_resultPath.push_back(Vecteur(start.x, start.y));
 		return;
 	}
 	
 	//Clear
+	m_shapes.clear();
 	m_openList.clear();
 	m_closedList.clear();
 	m_resultPath.clear();
@@ -163,12 +164,16 @@ std::vector<Vecteur> PathFinding::getPath()
 
 void PathFinding::draw(sf::RenderWindow &window)
 {
+	std::vector<sf::CircleShape>::iterator lit = m_shapesMap.begin();
+	for(; lit != m_shapesMap.end(); lit++)
+		window.draw(*lit);
 	std::vector<sf::CircleShape>::iterator it = m_shapes.begin();
 	for(; it != m_shapes.end(); it++)
 		window.draw(*it);
 	std::vector<sf::Text>::iterator itt = m_text.begin();
 	for(; itt != m_text.end(); itt++)
 		window.draw(*itt);
+
 }
 
 bool PathFinding::lineOfSight(std::shared_ptr<Node> startNode, std::shared_ptr<Node> goalNode)
