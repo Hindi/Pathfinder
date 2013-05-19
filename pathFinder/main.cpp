@@ -1,25 +1,28 @@
-#include "stdAfx.h"
 #include "PathFinding.h"
 #include "Vecteur.hpp"
 #include "World.hpp"
-#include <iostream>
+#include <SFML/Graphics.hpp>
 
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1024 , 768), "Pathfinding A*");
+	sf::RenderWindow window(sf::VideoMode(1024 , 768), "Pathfinding A* - Cours siteduzero.com");
+	//Espace de jeu
 	World world;
 	//On instancie le pathFinder
 	PathFinding pathfinder(world);
-	//On lance la recherche de chemin
-	pathfinder.findPath(Vecteur(10,10), Vecteur(500,100));
+	pathfinder.addEnemyPosition(60, 110, 20);
 	//On créé une liste Vecteur et on récupère le chemin du pathfinder
-	std::vector<Vecteur> path(pathfinder.getPath());
-
-	//On affiche les coordonées des points du chemin
-	std::vector<Vecteur>::reverse_iterator it = path.rbegin();
-	for(; it != path.rend(); it++)
-		std::cout << (it)->x << " " << (it)->y << std::endl;
+	std::vector<Vecteur> path;
 	
+	//On lance la recherche de chemin
+	path = pathfinder.findPath(Vecteur(10,40), Vecteur(250,50));
+	
+	//On affiche les coordonées des points du chemin
+	std::vector<Vecteur>::iterator it = path.begin();
+	for(; it != path.end(); it++)
+		std::cout << (*it).x << " " << (*it).y << std::endl;
+	
+	//Boucle d'affichage
 	while (window.isOpen())
     {
 		//Enlever l'affichage la frame précédent

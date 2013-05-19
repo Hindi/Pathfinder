@@ -1,18 +1,19 @@
 #include <memory>
 #include "World.hpp"
+#include <iostream>
 
 class Node
 {
 public:
 	Node();
-	Node(float x, float y, World world, Node* _parent = 0);
+	Node(int x, int y, World world, Node* _parent = 0);
 	~Node(void);
 
 	//return  G + H
-	float getF();
+	int getF();
 
 	//Distance depuis la node actuelle jusqu'à la prochaine
-	int manHattanDistance(Node nodeEnd);	
+	void manHattanDistance(Node nodeEnd);	
 
 	//Vérifie si this est proche de goalNode
 	bool isClosed(Node goalNode);
@@ -20,16 +21,16 @@ public:
 	Node& operator=(const Node &node);
 
 	//Position
-	float m_x, m_y;
+	int m_x, m_y;
 
 	//ID
-	float m_id;
+	int m_id;
 
 	//Pointeur vers le Node parent
 	Node* parent;
 
 	//Cout du déplacement
-	float G;
+	int G;
 
 	//manHattanDistance : distance entre la node et lanode d'arrivée
 	int H;
