@@ -76,7 +76,8 @@ std::vector<Vecteur> PathFinding::findPath(Vecteur start, Vecteur goal)
 	revertPath();
 	//changeCoordinateSystem();
 	m_enemyList.clear();
-	smoothPath();
+	//smoothPath();
+	this->testVisibility();
 	return m_resultPath;
 }
 
@@ -251,39 +252,56 @@ bool PathFinding::lineOfSight(Vecteur start, Vecteur goal)
 	int y = start.y;
 	int gx =  goal.x;
 	int gy =  goal.y;
-	int distance;
+	int distance;			//Distance entre la droite et l'obstacle
 
 	int dx = ABS(gx - x);
 	int dy = ABS(gy - y);
 
-	float a, b;
 
 	if(dx == 0 && dy ==0)
 		return true;
 
-	if(dy != 0)
+	if(dx != 0)
 	{
-		a = dx/dy;
+		float a, b;
+		int itx, ity;
+		a = 1.0f * dy / dx;
 		b = y - a*x;
-    
-		std::cout << y << " = " << a <<"*" << x <<" + " << b << std::endl;
+		//DEBUG
+		int ord;
+		for(int i(gx); i < x; i++)
+		{
+			ord = a*i + b;
+			sf::CircleShape shape(2);
+			shape.setFillColor(sf::Color::Magenta);
+			shape.setPosition(i,ord);
+			m_shapes.push_back(shape);
+		}
 
 		std::unordered_set<int>::iterator it(m_staticObstacles.begin());
 		for(; it != m_staticObstacles.end(); it++)
 		{
-			y = (*it)/m_world.worldSize;
-			x = (*it) -y;
-			distance =  ABS(-a*x -y +b ) / pow((int)pow(a,2) +1, 0.5);
-			if(distance  < m_world.step)
+			ity = (*it)/m_world.worldSize;
+			itx = (*it) - ity*m_world.worldSize;
+			if(ABS(itx - x) < dx && ABS(itx - gx) < dx && ABS(ity - y) < dy && ABS(ity - gy) < dy)
 			{
-			std::cout << "distance" << " " << ABS(-a*x -y +b)/ pow((int)pow(a,2) +1, 0.5) << std::endl;
-				return false;
+				//distance = ABS(a*x + b*y) / sqrt(a*a + b*b);
+				distance = ABS(-a*itx -ity +b ) / pow((int)pow(a,2) +1, 0.5);
+				if(distance  < m_world.step+6)
+				{
+					std::cout << "distance" << " " << ABS(a*itx + b*ity) / sqrt(a*a + b*b) << std::endl;
+					sf::CircleShape shape( m_world.step / 4);
+					shape.setFillColor(sf::Color::Green);
+					shape.setPosition(itx,ity);
+					m_shapes.push_back(shape);
+					return false;
+				}
 			}
 		}
 	}
 	
 	else
-	  distance = dx;
+	  distance = dy;
 	
 	
 	return true;
@@ -291,26 +309,39 @@ bool PathFinding::lineOfSight(Vecteur start, Vecteur goal)
 
 void PathFinding::smoothPath()
 {
-    Vecteur startPosition(*m_resultPath.begin());
-    Vecteur lastVisiblePosition(*m_resultPath.begin());
-    std::vector<Vecteur> tempPath;
+    Vecteur startPosition(*m_resultPath.begin());			//Noeud de départ pour le segment étudié
+    Vecteur lastVisiblePosition(*m_resultPath.begin());		//Le dernier noeud visible depuis startPosition
+    std::vector<Vecteur> tempPath;							//Le chemin obtenu est stocké ici
+
     tempPath.push_back(startPosition);
+
+	//On parcourt les positions retournées par l'algorithme A*
     std::vector<Vecteur>::iterator it(m_resultPath.begin());
     for(; it != m_resultPath.end(); it++)
     {
-      if(!lineOfSight(startPosition, *it))
-	  {
-		tempPath.push_back(lastVisiblePosition);
-		std::cout << "NEW NODE" << std::endl;
-		sf::CircleShape shape( m_world.step / 4);
-		shape.setFillColor(sf::Color::Green);
-		shape.setPosition(lastVisiblePosition.x, lastVisiblePosition.y);
-		m_shapes.push_back(shape);
-	  }
-      else
-		lastVisiblePosition = *it;
+		//Si le noeud de départ ne "voit" pas le noeud pointé par it
+		if(!lineOfSight(startPosition, *it))
+		{
+			//On stocke le dernier noeud visible dans tempPath
+			tempPath.push_back(lastVisiblePosition);
+			//DEBUG
+			std::cout << "NEW NODE" << std::endl;
+			sf::CircleShape shape( m_world.step / 4);
+			shape.setFillColor(sf::Color::Green);
+			shape.setPosition(lastVisiblePosition.x, lastVisiblePosition.y);
+			m_shapes.push_back(shape);
+		}
+		//Si le pointé par it est visible par le noeud de départ
+		else
+			//On actualise la valeur de la variable qui stocke le dernier noeud visible
+			lastVisiblePosition = *it;
     }
     m_resultPath = tempPath;
+}
+
+void PathFinding::testVisibility()
+{
+	std::cout << lineOfSight(Vecteur(200,10), Vecteur(10,40)) << std::endl;
 }
 
 Vecteur PathFinding::findCloseNode(Vecteur pos)

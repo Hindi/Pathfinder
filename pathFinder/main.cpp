@@ -18,9 +18,9 @@ int main()
 	path = pathfinder.findPath(Vecteur(10,40), Vecteur(250,50));
 	
 	//On affiche les coordonées des points du chemin
-	std::vector<Vecteur>::iterator it = path.begin();
+	/*std::vector<Vecteur>::iterator it = path.begin();
 	for(; it != path.end(); it++)
-		std::cout << (*it).x << " " << (*it).y << std::endl;
+		std::cout << (*it).x << " " << (*it).y << std::endl;*/
 	
 	//Boucle d'affichage
 	while (window.isOpen())

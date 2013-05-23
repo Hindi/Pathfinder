@@ -50,6 +50,7 @@ class PathFinding
 		bool lineOfSight(Vecteur start, Vecteur goal);
 		
 		void smoothPath();
+		void testVisibility();
 
 		//Permet de trouver une node de départ convenable
 		Vecteur findCloseNode(Vecteur pos);
